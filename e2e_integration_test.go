@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	server2 "function-first-composition-example-go/review-server/server"
 	"github.com/magiconair/properties/assert"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
+	"io"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -27,6 +29,8 @@ func TestRestaurantEndPointRanksRestaurant(t *testing.T) {
 	}
 
 	err = dbContainer.Start(ctx)
+
+	// TODO: insert the data into the db
 
 	if err != nil {
 		panic(err)
@@ -57,15 +61,20 @@ func TestRestaurantEndPointRanksRestaurant(t *testing.T) {
 
 	assert.Equal(t, response.StatusCode, 200)
 
-	//var body Response
-	//bodyBytes, err := io.ReadAll(response.Body)
-	//if err != nil {
-	//	t.Fatalf("Failed to read body: %v", err)
-	//}
-	//
-	//if err := json.Unmarshal(bodyBytes, &body); err != nil {
-	//	t.Fatalf("failed to unmarshall request body: %s", err.Error())
-	//}
+	var body Response
+	bodyBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		t.Fatalf("Failed to read body: %v", err)
+	}
+
+	if err := json.Unmarshal(bodyBytes, &body); err != nil {
+		t.Fatalf("failed to unmarshall request body: %s", err.Error())
+	}
+
+	//_ = json.Unmarshal(bodyBytes, &body)
+	//assert.Equal(t, len(body.Restaurants), 1)
+	//assert.Equal(t, body.Restaurants[0].Id, )
+	//assert.Equal(t, body.Restaurants[0].Name, restaurant.Name)
 }
 
 type Restaurant struct {
