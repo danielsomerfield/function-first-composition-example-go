@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	server2 "function-first-composition-example-go/review-server/server"
+	"function-first-composition-example-go/review-server/testutil"
 	"github.com/magiconair/properties/assert"
-	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"io"
 	"math/rand"
 	"net/http"
@@ -14,30 +14,43 @@ import (
 )
 
 func TestRestaurantEndPointRanksRestaurant(t *testing.T) {
+	t.Skipf("NYI")
 	ctx := context.Background()
 
-	dbContainer, err := postgres.RunContainer(
-		ctx,
-		postgres.WithDatabase("postgres"),
-		postgres.WithUsername("postgres"),
-		postgres.WithPassword("postgres"),
-		postgres.WithInitScripts("db/init.sql"),
-	)
+	db := testutil.StartDB(ctx)
 
-	if err != nil {
-		panic(err)
+	users := []testutil.User{
+		{"user1", "User 1", true},
+		{"user2", "User 2", false},
+		{"user3", "User 3", false},
 	}
 
-	err = dbContainer.Start(ctx)
+	restaurants := []testutil.Restaurant{
+		{"cafegloucesterid", "Cafe Gloucester"},
+		{"burgerkingid", "Burger King"},
+	}
 
-	// TODO: insert the data into the db
+	ratings := []testutil.RatingForRestaurant{
+		{"rating1", users[0], restaurants[0], "EXCELLENT"},
+		{"rating2", users[1], restaurants[0], "TERRIBLE"},
+		{"rating3", users[2], restaurants[0], "AVERAGE"},
+		{"rating4", users[2], restaurants[1], "ABOVE_AVERAGE"},
+	}
 
-	if err != nil {
-		panic(err)
+	for _, user := range users {
+		testutil.CreateUser(db, user)
+	}
+
+	for _, r := range restaurants {
+		testutil.CreateRestaurant(db, r)
+	}
+
+	for _, r := range ratings {
+		testutil.CreateRatingByUserForRestaurant(db, r)
 	}
 
 	t.Cleanup(func() {
-		if err := dbContainer.Terminate(ctx); err != nil {
+		if err := db.Stop(ctx); err != nil {
 			t.Fatalf("failed to terminate db: %s", err.Error())
 		}
 	})
@@ -71,10 +84,10 @@ func TestRestaurantEndPointRanksRestaurant(t *testing.T) {
 		t.Fatalf("failed to unmarshall request body: %s", err.Error())
 	}
 
-	//_ = json.Unmarshal(bodyBytes, &body)
-	//assert.Equal(t, len(body.Restaurants), 1)
-	//assert.Equal(t, body.Restaurants[0].Id, )
-	//assert.Equal(t, body.Restaurants[0].Name, restaurant.Name)
+	_ = json.Unmarshal(bodyBytes, &body)
+	assert.Equal(t, len(body.Restaurants), 2)
+	assert.Equal(t, body.Restaurants[0].Id, "cafegloucesterid")
+	assert.Equal(t, body.Restaurants[0].Id, "burgerkingid")
 }
 
 type Restaurant struct {
