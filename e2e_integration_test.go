@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	server2 "function-first-composition-example-go/review-server/server"
+	"function-first-composition-example-go/review-server/server"
 	"function-first-composition-example-go/review-server/testutil"
 	"github.com/magiconair/properties/assert"
 	"io"
@@ -56,13 +56,13 @@ func TestRestaurantEndPointRanksRestaurant(t *testing.T) {
 	})
 
 	randomPort := rand.Intn(65535-1024) + 1024
-	server := server2.NewServer("127.0.0.1", randomPort)
-	if err := server.Start(); err != nil {
+	reviewServer := server.NewServer("127.0.0.1", randomPort)
+	if err := reviewServer.Start(); err != nil {
 		t.Fatalf("failed to start server: %s", err.Error())
 	}
 
 	t.Cleanup(func() {
-		if err := server.Stop(); err != nil {
+		if err := reviewServer.Stop(); err != nil {
 			t.Fatalf("failed to stop server: %s", err.Error())
 		}
 	})
