@@ -6,8 +6,8 @@ import (
 
 func Initialize(engine *gin.Engine) {
 	dependencies := Dependencies{
-		GetTopRestaurants: func() []Restaurant {
-			return []Restaurant{}
+		GetTopRestaurants: func() ([]Restaurant, error) {
+			return []Restaurant{}, nil
 		},
 	}
 	engine.GET("/:city/restaurants/recommended", createController(&dependencies))

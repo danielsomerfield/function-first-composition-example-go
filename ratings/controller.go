@@ -5,17 +5,21 @@ import (
 )
 
 type Dependencies struct {
-	GetTopRestaurants func() []Restaurant
+	GetTopRestaurants func() ([]Restaurant, error)
 }
 
 func createController(dependencies *Dependencies) func(c *gin.Context) {
 
 	return func(c *gin.Context) {
-		restaurants := (*dependencies).GetTopRestaurants()
-		body := ResponseBody{
-			Restaurants: restaurants,
+		restaurants, err := (*dependencies).GetTopRestaurants()
+		if err == nil {
+			body := ResponseBody{
+				Restaurants: restaurants,
+			}
+			c.JSON(200, body)
+		} else {
+			c.JSON(500, struct{}{})
 		}
-		c.JSON(200, body)
 	}
 }
 
