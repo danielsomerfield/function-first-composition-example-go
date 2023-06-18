@@ -18,8 +18,8 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 		},
 	}
 
-	getRestaurantByIdStub := func(id string) Restaurant {
-		return restaurantsById[id]
+	getRestaurantByIdStub := func(id string) (Restaurant, error) {
+		return restaurantsById[id], nil
 	}
 
 	ratings := []RatingsByRestaurant{
@@ -59,14 +59,14 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 		},
 	}
 
-	findRatingsByRestaurantStub := func(city string) (returnedRatings []RatingsByRestaurant) {
+	findRatingsByRestaurantStub := func(city string) (returnedRatings []RatingsByRestaurant, err error) {
 
 		for _, s := range ratingsByCity {
 			if s.City == city {
 				returnedRatings = append(returnedRatings, s.Ratings...)
 			}
 		}
-		return returnedRatings
+		return returnedRatings, nil
 	}
 
 	calculateRatingForRestaurantStub := func(ratings RatingsByRestaurant) (int, error) {
@@ -86,7 +86,8 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 	}
 
 	topRated := createTopRated(&dependencies)
-	topRestaurants := topRated("vancouverbc")
+	topRestaurants, err := topRated("vancouverbc")
+	assert.Equal(t, err == nil, true)
 	assert.Equal(t, len(topRestaurants), 2)
 	assert.Equal(t, topRestaurants[0].Id, "restaurant1")
 	assert.Equal(t, topRestaurants[0].Name, "Restaurant 1")
