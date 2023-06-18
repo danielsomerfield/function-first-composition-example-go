@@ -16,7 +16,7 @@ func TestController_RespondsWithJSONRatings(t *testing.T) {
 	c.Params = []gin.Param{
 		{
 			Key:   "city",
-			Value: "nyc",
+			Value: "vancouverbc",
 		},
 	}
 
@@ -29,9 +29,14 @@ func TestController_RespondsWithJSONRatings(t *testing.T) {
 		restaurant,
 	}
 
-	dependenciesStub := Dependencies{
-		GetTopRestaurants: func() ([]Restaurant, error) {
-			return vancouverRestaurants, nil
+	dependenciesStub := ControllerDependencies{
+		GetTopRestaurants: func(city string) ([]Restaurant, error) {
+			if city == "vancouverbc" {
+				return vancouverRestaurants, nil
+			} else {
+				return []Restaurant{}, nil
+			}
+
 		},
 	}
 
@@ -53,9 +58,15 @@ func TestController_RespondsWithJSONRatings(t *testing.T) {
 func TestController_RespondsWith500OnUnexpectedError(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(recorder)
+	c.Params = []gin.Param{
+		{
+			Key:   "city",
+			Value: "vancouverbc",
+		},
+	}
 
-	dependenciesStub := Dependencies{
-		GetTopRestaurants: func() ([]Restaurant, error) {
+	dependenciesStub := ControllerDependencies{
+		GetTopRestaurants: func(city string) ([]Restaurant, error) {
 			return nil, types.Error{}
 		},
 	}
@@ -63,5 +74,30 @@ func TestController_RespondsWith500OnUnexpectedError(t *testing.T) {
 	controller := createController(&dependenciesStub)
 	controller(c)
 	assert.Equal(t, recorder.Code, http.StatusInternalServerError)
+
+}
+
+func TestController_RespondsWith40OnMissingCity(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(recorder)
+
+	restaurant := Restaurant{
+		Id:   "cafegloucesterid",
+		Name: "Cafe Gloucester",
+	}
+
+	vancouverRestaurants := []Restaurant{
+		restaurant,
+	}
+
+	dependenciesStub := ControllerDependencies{
+		GetTopRestaurants: func(_ string) ([]Restaurant, error) {
+			return vancouverRestaurants, nil
+		},
+	}
+
+	controller := createController(&dependenciesStub)
+	controller(c)
+	assert.Equal(t, recorder.Code, http.StatusBadRequest)
 
 }

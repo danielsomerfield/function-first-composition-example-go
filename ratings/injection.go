@@ -5,10 +5,13 @@ import (
 )
 
 func Initialize(engine *gin.Engine) {
-	dependencies := Dependencies{
-		GetTopRestaurants: func() ([]Restaurant, error) {
-			return []Restaurant{}, nil
-		},
+
+	dependencies := ControllerDependencies{
+		GetTopRestaurants: createTopRated(&TopRatedDependencies{
+			getRestaurantById:            nil,
+			findRatingsByRestaurant:      nil,
+			calculateRatingForRestaurant: nil,
+		}),
 	}
 	engine.GET("/:city/restaurants/recommended", createController(&dependencies))
 }
