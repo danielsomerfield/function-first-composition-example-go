@@ -27,12 +27,20 @@ func (d *db) Exec(sql string, toBind ...interface{}) error {
 	return nil
 }
 
+func (d *db) GetDB() *sql.DB {
+	return d.db
+}
+
+type DBImplementation interface {
+	GetDB() *sql.DB
+}
+
 type DB interface {
 	Stop(ctx context.Context) error
 	Exec(sql string, toBind ...interface{}) error
 }
 
-func StartDB(ctx context.Context) DB {
+func StartDB(ctx context.Context, initScript string) DB {
 	databaseName := "postgres"
 	dbUsername := "postgres"
 	dbPassword := "postgres"
@@ -41,7 +49,7 @@ func StartDB(ctx context.Context) DB {
 		postgres.WithDatabase(databaseName),
 		postgres.WithUsername(dbUsername),
 		postgres.WithPassword(dbPassword),
-		postgres.WithInitScripts("db/init.sql"),
+		postgres.WithInitScripts(initScript),
 		testcontainers.WithWaitStrategy(wait.ForLog("database system is ready to accept connections").
 			WithOccurrence(2).WithStartupTimeout(5*time.Second)),
 	)

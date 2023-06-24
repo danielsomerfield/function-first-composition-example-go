@@ -2,6 +2,7 @@ package ratings
 
 import (
 	"encoding/json"
+	. "function-first-composition-example-go/review-server/domain"
 	"github.com/gin-gonic/gin"
 	"github.com/magiconair/properties/assert"
 	"go/types"

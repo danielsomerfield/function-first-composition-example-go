@@ -17,7 +17,7 @@ func TestRestaurantEndPointRanksRestaurant(t *testing.T) {
 	t.Skipf("NYI")
 	ctx := context.Background()
 
-	db := testutil.StartDB(ctx)
+	db := testutil.StartDB(ctx, "db/init.sql")
 
 	users := []testutil.User{
 		{"user1", "User 1", true},

@@ -2,12 +2,13 @@ package ratings
 
 import (
 	"errors"
+	"function-first-composition-example-go/review-server/domain"
 	"github.com/magiconair/properties/assert"
 	"testing"
 )
 
 func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
-	restaurantsById := map[string]Restaurant{
+	restaurantsById := map[string]domain.Restaurant{
 		"restaurant1": {
 			Id:   "restaurant1",
 			Name: "Restaurant 1",
@@ -18,8 +19,9 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 		},
 	}
 
-	getRestaurantByIdStub := func(id string) (Restaurant, error) {
-		return restaurantsById[id], nil
+	getRestaurantByIdStub := func(id string) (*domain.Restaurant, error) {
+		restaurant := restaurantsById[id]
+		return &restaurant, nil
 	}
 
 	ratings := []RatingsByRestaurant{
@@ -60,7 +62,6 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 	}
 
 	findRatingsByRestaurantStub := func(city string) (returnedRatings []RatingsByRestaurant, err error) {
-
 		for _, s := range ratingsByCity {
 			if s.City == city {
 				returnedRatings = append(returnedRatings, s.Ratings...)
@@ -69,7 +70,7 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 		return returnedRatings, nil
 	}
 
-	calculateRatingForRestaurantStub := func(ratings RatingsByRestaurant) (int, error) {
+	calculateRatingForRestaurantStub := func(ratings *RatingsByRestaurant) (int, error) {
 		if ratings.RestaurantId == "restaurant1" {
 			return 10, nil
 		} else if ratings.RestaurantId == "restaurant2" {

@@ -1,14 +1,15 @@
 package ratings
 
 import (
+	. "function-first-composition-example-go/review-server/domain"
 	"log"
 	"sort"
 )
 
 type TopRatedDependencies struct {
-	getRestaurantById            func(id string) (Restaurant, error)
+	getRestaurantById            func(id string) (*Restaurant, error)
 	findRatingsByRestaurant      func(city string) ([]RatingsByRestaurant, error)
-	calculateRatingForRestaurant func(ratings RatingsByRestaurant) (int, error)
+	calculateRatingForRestaurant func(ratings *RatingsByRestaurant) (int, error)
 }
 
 type OverallRating struct {
@@ -25,8 +26,8 @@ func createTopRated(dependencies *TopRatedDependencies) func(string) ([]Restaura
 		return total
 	}
 
-	calculateRatings := func(ratings []RatingsByRestaurant) (overall OverallRatings) {
-		for _, r := range ratings {
+	calculateRatings := func(ratings *[]RatingsByRestaurant) (overall OverallRatings) {
+		for _, r := range *ratings {
 			overall = append(overall, OverallRating{
 				restaurantId: r.RestaurantId,
 				rating:       calculateRatingForRestaurant(r.Ratings),
@@ -41,7 +42,7 @@ func createTopRated(dependencies *TopRatedDependencies) func(string) ([]Restaura
 			if err != nil {
 				log.Printf("Could not load restaurant with from %v. Err: %v", rating, err)
 			} else {
-				restaurants = append(restaurants, restaurant)
+				restaurants = append(restaurants, *restaurant)
 			}
 		}
 
@@ -55,7 +56,7 @@ func createTopRated(dependencies *TopRatedDependencies) func(string) ([]Restaura
 			return nil, err
 		}
 
-		overallRatings := calculateRatings(ratings)
+		overallRatings := calculateRatings(&ratings)
 
 		sort.Sort(overallRatings)
 
