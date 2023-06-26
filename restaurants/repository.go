@@ -7,14 +7,17 @@ import (
 
 func CreateGetRestaurantById(db *sql.DB) func(string) (*domain.Restaurant, error) {
 	return func(id string) (*domain.Restaurant, error) {
-		rslt, err := db.Query("select id, name from restaurant where id = $1", id)
+		rows, err := db.Query("select id, name from restaurant where id = $1", id)
+		defer func(rows *sql.Rows) {
+			_ = rows.Close()
+		}(rows)
 		if err != nil {
 			return nil, err
 		} else {
-			if rslt.Next() {
+			if rows.Next() {
 				var id string
 				var name string
-				err = rslt.Scan(&id, &name)
+				err = rows.Scan(&id, &name)
 				if err != nil {
 					return nil, err
 				}

@@ -10,6 +10,14 @@ const (
 	Terrible            = -2
 )
 
+var ratings = map[string]Rating{
+	"Excellent":    Excellent,
+	"AboveAverage": AboveAverage,
+	"Average":      Average,
+	"BelowAverage": BelowAverage,
+	"Terrible":     Terrible,
+}
+
 type User struct {
 	Id        string
 	IsTrusted bool

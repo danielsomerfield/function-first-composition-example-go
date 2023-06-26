@@ -14,12 +14,11 @@ func Initialize(engine *gin.Engine) {
 	database := db.Connect(config.DataSource)
 
 	getRestaurantById := restaurants.CreateGetRestaurantById(database)
+	findRatingsByRestaurant := CreateFindRatingsByRestaurant(database)
 
 	topRatedDependencies := &TopRatedDependencies{
-		getRestaurantById: getRestaurantById,
-		findRatingsByRestaurant: func(city string) ([]RatingsByRestaurant, error) {
-			return nil, nil
-		},
+		getRestaurantById:       getRestaurantById,
+		findRatingsByRestaurant: findRatingsByRestaurant,
 		calculateRatingForRestaurant: func(ratings *RatingsByRestaurant) (int, error) {
 			return 0, nil
 		},
