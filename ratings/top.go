@@ -9,7 +9,7 @@ import (
 type TopRatedDependencies struct {
 	getRestaurantById            func(id string) (*Restaurant, error)
 	findRatingsByRestaurant      func(city string) ([]RatingsByRestaurant, error)
-	calculateRatingForRestaurant func(ratings *RatingsByRestaurant) (int, error)
+	calculateRatingForRestaurant func(ratings *RatingsByRestaurant) int
 }
 
 type OverallRating struct {

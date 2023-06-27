@@ -1,7 +1,6 @@
 package ratings
 
 import (
-	"errors"
 	"function-first-composition-example-go/review-server/domain"
 	"github.com/magiconair/properties/assert"
 	"testing"
@@ -70,13 +69,14 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 		return returnedRatings, nil
 	}
 
-	calculateRatingForRestaurantStub := func(ratings *RatingsByRestaurant) (int, error) {
+	calculateRatingForRestaurantStub := func(ratings *RatingsByRestaurant) int {
 		if ratings.RestaurantId == "restaurant1" {
-			return 10, nil
+			return 10
 		} else if ratings.RestaurantId == "restaurant2" {
-			return 5, nil
+			return 5
 		} else {
-			return 0, errors.New("unknown restaurant")
+			t.Fatalf("Unknown restaurant %v\n", ratings.RestaurantId)
+			return 0
 		}
 	}
 

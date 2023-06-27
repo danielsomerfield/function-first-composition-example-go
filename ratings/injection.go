@@ -17,11 +17,9 @@ func Initialize(engine *gin.Engine) {
 	findRatingsByRestaurant := CreateFindRatingsByRestaurant(database)
 
 	topRatedDependencies := &TopRatedDependencies{
-		getRestaurantById:       getRestaurantById,
-		findRatingsByRestaurant: findRatingsByRestaurant,
-		calculateRatingForRestaurant: func(ratings *RatingsByRestaurant) (int, error) {
-			return 0, nil
-		},
+		getRestaurantById:            getRestaurantById,
+		findRatingsByRestaurant:      findRatingsByRestaurant,
+		calculateRatingForRestaurant: Calculate,
 	}
 	dependencies := ControllerDependencies{
 		GetTopRestaurants: createTopRated(topRatedDependencies),

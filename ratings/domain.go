@@ -10,6 +10,10 @@ const (
 	Terrible            = -2
 )
 
+func (r Rating) value() int {
+	return int(r)
+}
+
 var ratings = map[string]Rating{
 	"Excellent":    Excellent,
 	"AboveAverage": AboveAverage,
