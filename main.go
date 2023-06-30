@@ -12,4 +12,6 @@ func main() {
 	if err := reviewServer.Start(); err != nil {
 		log.Fatalf("failed to start server: %s", err.Error())
 	}
+
+	<-reviewServer.Shutdown
 }

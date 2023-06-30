@@ -32,7 +32,7 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 						Id:        "user1",
 						IsTrusted: true,
 					},
-					Rating: Excellent,
+					Rating: Terrible,
 				},
 			},
 		},

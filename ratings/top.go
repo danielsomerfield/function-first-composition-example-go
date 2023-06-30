@@ -14,34 +14,30 @@ type TopRatedDependencies struct {
 
 type OverallRating struct {
 	restaurantId string
-	rating       int32
+	rating       int
 }
 
 func createTopRated(dependencies *TopRatedDependencies) func(string) ([]Restaurant, error) {
 
-	calculateRatingForRestaurant := func(ratings []RestaurantRating) (total int32) {
-		for _, r := range ratings {
-			total = total + int32(r.Rating)
-		}
-		return total
-	}
-
 	calculateRatings := func(ratings *[]RatingsByRestaurant) (overall OverallRatings) {
+		overall = make([]OverallRating, 0)
 		for _, r := range *ratings {
 			overall = append(overall, OverallRating{
 				restaurantId: r.RestaurantId,
-				rating:       calculateRatingForRestaurant(r.Ratings),
+				rating:       dependencies.calculateRatingForRestaurant(&r),
 			})
 		}
 		return overall
 	}
 
 	toRestaurants := func(ratings OverallRatings) (restaurants []Restaurant) {
+		restaurants = make([]Restaurant, 0)
 		for _, rating := range ratings {
 			restaurant, err := dependencies.getRestaurantById(rating.restaurantId)
 			if err != nil {
 				log.Printf("Could not load restaurant with from %v. Err: %v", rating, err)
 			} else {
+				// TODO: error handling if restaurant cannot be found
 				restaurants = append(restaurants, *restaurant)
 			}
 		}
@@ -72,7 +68,7 @@ func (ratings OverallRatings) Len() int {
 	return len(ratings)
 }
 func (ratings OverallRatings) Less(i int, j int) bool {
-	return ratings[i].rating < ratings[j].rating
+	return ratings[i].rating > ratings[j].rating
 }
 
 func (ratings OverallRatings) Swap(i int, j int) {

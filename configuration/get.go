@@ -20,17 +20,35 @@ func getRequired(name string) string {
 	return value
 }
 
-func FromEnv() *Configuration {
-	portString := getRequired("PORT")
-	port, err := strconv.Atoi(portString)
-	if err != nil {
-		log.Fatalf("Invalid port value %v", portString)
+func getOrDefault(name string, defaultValue string) string {
+	value, found := os.LookupEnv(name)
+	if !found {
+		value = defaultValue
 	}
-	return &Configuration{DataSource: db.DataSource{
-		Host:     getRequired("DB_HOST"),
-		Port:     port,
-		User:     getRequired("DB_USER"),
-		Password: getRequired("DB_PASSWORD"),
-		DbName:   getRequired("DB_NAME"),
-	}}
+	return value
+}
+
+func FromEnv() *Configuration {
+	dbPortString := getOrDefault("REVIEW_DATABASE_PORT", "5432")
+	dbPort, err := strconv.Atoi(dbPortString)
+	if err != nil {
+		log.Fatalf("Invalid database port value %v", dbPortString)
+	}
+
+	serverPortString := getOrDefault("SERVER_PORT", "8080")
+	serverPort, err := strconv.Atoi(serverPortString)
+	if err != nil {
+		log.Fatalf("Invalid server port value %v", dbPortString)
+	}
+
+	return &Configuration{
+		DataSource: db.DataSource{
+			Host:     getRequired("REVIEW_DATABASE_HOST"),
+			Port:     dbPort,
+			User:     getRequired("REVIEW_DATABASE_USER"),
+			Password: getRequired("REVIEW_DATABASE_PASSWORD"),
+			DbName:   getRequired("REVIEW_DATABASE_DATABASE"),
+		},
+		ServerPort: serverPort,
+	}
 }

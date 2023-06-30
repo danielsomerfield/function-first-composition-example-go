@@ -34,6 +34,7 @@ func CreateFindRatingsByRestaurant(db *sql.DB) func(string) ([]RatingsByRestaura
 					Rating: ratings[rating],
 				})
 			}
+			rbr = make([]RatingsByRestaurant, 0)
 			for k, v := range m {
 				rbr = append(rbr, RatingsByRestaurant{
 					RestaurantId: k,

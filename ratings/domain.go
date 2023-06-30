@@ -15,11 +15,11 @@ func (r Rating) value() int {
 }
 
 var ratings = map[string]Rating{
-	"Excellent":    Excellent,
-	"AboveAverage": AboveAverage,
-	"Average":      Average,
-	"BelowAverage": BelowAverage,
-	"Terrible":     Terrible,
+	"EXCELLENT":     Excellent,
+	"ABOVE_AVERAGE": AboveAverage,
+	"AVERAGE":       Average,
+	"BELOW_AVERAGE": BelowAverage,
+	"TERRIBLE":      Terrible,
 }
 
 type User struct {

@@ -47,7 +47,7 @@ func (server *Server) Start() error {
 
 		server.Startup <- 0
 
-		log.Printf("%v starting listening at %v", server.ServiceName, server.HTTPServer.Addr)
+		log.Printf("%v started listening at %v", server.ServiceName, server.HTTPServer.Addr)
 
 		if err := server.HTTPServer.Serve(listener); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
