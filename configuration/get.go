@@ -9,11 +9,12 @@ import (
 
 type Configuration struct {
 	DataSource db.DataSource
+	ServerPort int
 }
 
 func getRequired(name string) string {
 	value, found := os.LookupEnv(name)
-	if found {
+	if !found {
 		log.Fatalf("Missing required value %v", name)
 	}
 	return value

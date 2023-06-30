@@ -1,6 +1,7 @@
 package server
 
 import (
+	"function-first-composition-example-go/review-server/configuration"
 	"function-first-composition-example-go/review-server/ratings"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -9,13 +10,15 @@ import (
 	"strconv"
 )
 
-func NewServer(host string, port int) *Server {
+func NewServer(getConfiguration func() *configuration.Configuration) *Server {
+	config := getConfiguration()
 	return &Server{
-		Engine:      gin.Default(),
-		Shutdown:    make(chan int),
-		Startup:     make(chan int),
-		Address:     host + ":" + strconv.Itoa(port),
-		ServiceName: "review-server",
+		Engine:        gin.Default(),
+		Shutdown:      make(chan int),
+		Startup:       make(chan int),
+		Address:       ":" + strconv.Itoa(config.ServerPort),
+		ServiceName:   "review-server",
+		Configuration: config,
 	}
 }
 
@@ -29,7 +32,7 @@ func (server *Server) Start() error {
 		Handler: server.Engine,
 	}
 
-	ratings.Initialize(server.Engine)
+	ratings.Initialize(server.Engine, server.Configuration)
 
 	go func() {
 		log.Printf("%v about to start running at %v", server.ServiceName, server.HTTPServer.Addr)
@@ -64,10 +67,11 @@ func (server *Server) Stop() error {
 }
 
 type Server struct {
-	Engine      *gin.Engine
-	Shutdown    chan int
-	Startup     chan int
-	Address     string
-	HTTPServer  *http.Server
-	ServiceName string
+	Engine        *gin.Engine
+	Shutdown      chan int
+	Startup       chan int
+	Address       string
+	HTTPServer    *http.Server
+	ServiceName   string
+	Configuration *configuration.Configuration
 }

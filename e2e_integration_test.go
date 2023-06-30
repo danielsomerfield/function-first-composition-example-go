@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"function-first-composition-example-go/review-server/configuration"
 	"function-first-composition-example-go/review-server/server"
 	"function-first-composition-example-go/review-server/testutil"
 	"github.com/magiconair/properties/assert"
@@ -14,10 +15,9 @@ import (
 )
 
 func TestRestaurantEndPointRanksRestaurant(t *testing.T) {
-	t.Skipf("NYI")
 	ctx := context.Background()
 
-	db := testutil.StartDB(ctx, "db/init.sql")
+	database := testutil.StartDB(ctx, "db/init.sql")
 
 	users := []testutil.User{
 		{"user1", "User 1", true},
@@ -38,25 +38,30 @@ func TestRestaurantEndPointRanksRestaurant(t *testing.T) {
 	}
 
 	for _, user := range users {
-		testutil.CreateUser(db, user)
+		testutil.CreateUser(database, user)
 	}
 
 	for _, r := range restaurants {
-		testutil.CreateRestaurant(db, r)
+		testutil.CreateRestaurant(database, r)
 	}
 
 	for _, r := range ratings {
-		testutil.CreateRatingByUserForRestaurant(db, r)
+		testutil.CreateRatingByUserForRestaurant(database, r)
 	}
 
 	t.Cleanup(func() {
-		if err := db.Stop(ctx); err != nil {
+		if err := database.Stop(ctx); err != nil {
 			t.Fatalf("failed to terminate db: %s", err.Error())
 		}
 	})
 
 	randomPort := rand.Intn(65535-1024) + 1024
-	reviewServer := server.NewServer("127.0.0.1", randomPort)
+	reviewServer := server.NewServer(func() *configuration.Configuration {
+		return &configuration.Configuration{
+			DataSource: *database.DataSource(),
+			ServerPort: randomPort,
+		}
+	})
 	if err := reviewServer.Start(); err != nil {
 		t.Fatalf("failed to start server: %s", err.Error())
 	}
@@ -87,7 +92,7 @@ func TestRestaurantEndPointRanksRestaurant(t *testing.T) {
 	_ = json.Unmarshal(bodyBytes, &body)
 	assert.Equal(t, len(body.Restaurants), 2)
 	assert.Equal(t, body.Restaurants[0].Id, "cafegloucesterid")
-	assert.Equal(t, body.Restaurants[0].Id, "burgerkingid")
+	assert.Equal(t, body.Restaurants[1].Id, "burgerkingid")
 }
 
 type Restaurant struct {

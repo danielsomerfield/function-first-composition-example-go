@@ -7,9 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Initialize(engine *gin.Engine) {
-
-	config := configuration.FromEnv()
+func Initialize(engine *gin.Engine, config *configuration.Configuration) {
 
 	database := db.Connect(config.DataSource)
 
