@@ -1,8 +1,8 @@
-package ratings
+package restaurantRatings
 
 import (
 	"encoding/json"
-	. "function-first-composition-example-go/review-server/domain"
+	. "function-first-composition-example-go/review-server/restaurantRatings/restaurants"
 	"github.com/gin-gonic/gin"
 	"github.com/magiconair/properties/assert"
 	"go/types"

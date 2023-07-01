@@ -1,7 +1,8 @@
-package ratings
+package restaurantRatings
 
 import (
 	"context"
+	ratings2 "function-first-composition-example-go/review-server/restaurantRatings/ratings"
 	"function-first-composition-example-go/review-server/testutil"
 	"github.com/magiconair/properties/assert"
 	"sort"
@@ -62,7 +63,7 @@ func TestFindRatingsByRestaurant(t *testing.T) {
 	testutil.CreateRatingByUserForRestaurant(db, rating2)
 	testutil.CreateRatingByUserForRestaurant(db, rating3)
 
-	findRatingsByRestaurantId := CreateFindRatingsByRestaurant(db.(testutil.DBImplementation).GetDB())
+	findRatingsByRestaurantId := ratings2.CreateFindRatingsByRestaurant(db.(testutil.DBImplementation).GetDB())
 	ratings, err := findRatingsByRestaurantId("vancouverbc")
 	if err != nil {
 		t.Fatalf("Received error %v", err)
@@ -71,7 +72,7 @@ func TestFindRatingsByRestaurant(t *testing.T) {
 		return ratings[i].RestaurantId < ratings[j].RestaurantId
 	})
 
-	assert.Equal(t, len(ratings), 2, "ratings by restaurant")
+	assert.Equal(t, len(ratings), 2, "restaurantRatings by restaurant")
 	assert.Equal(t, ratings[0].RestaurantId, restaurant1.Id)
 	assert.Equal(t, ratings[1].RestaurantId, restaurant2.Id)
 	assert.Equal(t, len(ratings[0].Ratings), 2)

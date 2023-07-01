@@ -2,7 +2,7 @@ package server
 
 import (
 	"function-first-composition-example-go/review-server/configuration"
-	"function-first-composition-example-go/review-server/ratings"
+	"function-first-composition-example-go/review-server/restaurantRatings"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net"
@@ -32,7 +32,7 @@ func (server *Server) Start() error {
 		Handler: server.Engine,
 	}
 
-	ratings.Initialize(server.Engine, server.Configuration)
+	restaurantRatings.Initialize(server.Engine, server.Configuration)
 
 	go func() {
 		log.Printf("%v about to start running at %v", server.ServiceName, server.HTTPServer.Addr)

@@ -10,7 +10,7 @@ const (
 	Terrible            = -2
 )
 
-func (r Rating) value() int {
+func (r Rating) Value() int {
 	return int(r)
 }
 

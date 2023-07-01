@@ -1,13 +1,14 @@
-package ratings
+package restaurantRatings
 
 import (
-	"function-first-composition-example-go/review-server/domain"
+	ratings2 "function-first-composition-example-go/review-server/restaurantRatings/ratings"
+	"function-first-composition-example-go/review-server/restaurantRatings/restaurants"
 	"github.com/magiconair/properties/assert"
 	"testing"
 )
 
 func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
-	restaurantsById := map[string]domain.Restaurant{
+	restaurantsById := map[string]restaurants.Restaurant{
 		"restaurant1": {
 			Id:   "restaurant1",
 			Name: "Restaurant 1",
@@ -18,33 +19,33 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 		},
 	}
 
-	getRestaurantByIdStub := func(id string) (*domain.Restaurant, error) {
+	getRestaurantByIdStub := func(id string) (*restaurants.Restaurant, error) {
 		restaurant := restaurantsById[id]
 		return &restaurant, nil
 	}
 
-	ratings := []RatingsByRestaurant{
+	ratings := []ratings2.RatingsByRestaurant{
 		{
 			RestaurantId: "restaurant1",
-			Ratings: []RestaurantRating{
+			Ratings: []ratings2.RestaurantRating{
 				{
-					User: User{
+					User: ratings2.User{
 						Id:        "user1",
 						IsTrusted: true,
 					},
-					Rating: Terrible,
+					Rating: ratings2.Terrible,
 				},
 			},
 		},
 		{
 			RestaurantId: "restaurant2",
-			Ratings: []RestaurantRating{
+			Ratings: []ratings2.RestaurantRating{
 				{
-					User: User{
+					User: ratings2.User{
 						Id:        "user2",
 						IsTrusted: false,
 					},
-					Rating: Excellent,
+					Rating: ratings2.Excellent,
 				},
 			},
 		},
@@ -52,7 +53,7 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 
 	ratingsByCity := []struct {
 		City    string
-		Ratings []RatingsByRestaurant
+		Ratings []ratings2.RatingsByRestaurant
 	}{
 		{
 			City:    "vancouverbc",
@@ -60,7 +61,7 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 		},
 	}
 
-	findRatingsByRestaurantStub := func(city string) (returnedRatings []RatingsByRestaurant, err error) {
+	findRatingsByRestaurantStub := func(city string) (returnedRatings []ratings2.RatingsByRestaurant, err error) {
 		for _, s := range ratingsByCity {
 			if s.City == city {
 				returnedRatings = append(returnedRatings, s.Ratings...)
@@ -69,7 +70,7 @@ func Test_topRatedFromProprietaryAlgorithm(t *testing.T) {
 		return returnedRatings, nil
 	}
 
-	calculateRatingForRestaurantStub := func(ratings *RatingsByRestaurant) int {
+	calculateRatingForRestaurantStub := func(ratings *ratings2.RatingsByRestaurant) int {
 		if ratings.RestaurantId == "restaurant1" {
 			return 10
 		} else if ratings.RestaurantId == "restaurant2" {

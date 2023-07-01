@@ -11,7 +11,7 @@ func TestGetRestaurantByIdWithData(t *testing.T) {
 
 	ctx := context.Background()
 
-	db := testutil.StartDB(ctx, "../db/init.sql")
+	db := testutil.StartDB(ctx, "../../db/init.sql")
 	t.Cleanup(func() {
 		if err := db.Stop(ctx); err != nil {
 			t.Fatalf("failed to terminate db: %s", err.Error())
@@ -34,7 +34,7 @@ func TestGetRestaurantByIdNotFound(t *testing.T) {
 
 	ctx := context.Background()
 
-	db := testutil.StartDB(ctx, "../db/init.sql")
+	db := testutil.StartDB(ctx, "../../db/init.sql")
 	t.Cleanup(func() {
 		if err := db.Stop(ctx); err != nil {
 			t.Fatalf("failed to terminate db: %s", err.Error())

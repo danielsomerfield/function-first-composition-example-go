@@ -1,4 +1,4 @@
-package domain
+package restaurants
 
 type Restaurant struct {
 	Id   string `json:"id"`

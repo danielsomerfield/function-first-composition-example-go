@@ -1,12 +1,12 @@
-package ratings
+package restaurantRatings
 
 import (
-	"function-first-composition-example-go/review-server/domain"
+	"function-first-composition-example-go/review-server/restaurantRatings/restaurants"
 	"github.com/gin-gonic/gin"
 )
 
 type ControllerDependencies struct {
-	GetTopRestaurants func(city string) ([]domain.Restaurant, error)
+	GetTopRestaurants func(city string) ([]restaurants.Restaurant, error)
 }
 
 func createController(dependencies *ControllerDependencies) func(c *gin.Context) {
@@ -31,5 +31,5 @@ func createController(dependencies *ControllerDependencies) func(c *gin.Context)
 }
 
 type ResponseBody struct {
-	Restaurants []domain.Restaurant `json:"restaurants"`
+	Restaurants []restaurants.Restaurant `json:"restaurants"`
 }

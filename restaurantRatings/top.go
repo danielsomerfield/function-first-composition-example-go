@@ -1,15 +1,16 @@
-package ratings
+package restaurantRatings
 
 import (
-	. "function-first-composition-example-go/review-server/domain"
+	"function-first-composition-example-go/review-server/restaurantRatings/ratings"
+	. "function-first-composition-example-go/review-server/restaurantRatings/restaurants"
 	"log"
 	"sort"
 )
 
 type TopRatedDependencies struct {
 	getRestaurantById            func(id string) (*Restaurant, error)
-	findRatingsByRestaurant      func(city string) ([]RatingsByRestaurant, error)
-	calculateRatingForRestaurant func(ratings *RatingsByRestaurant) int
+	findRatingsByRestaurant      func(city string) ([]ratings.RatingsByRestaurant, error)
+	calculateRatingForRestaurant func(ratings *ratings.RatingsByRestaurant) int
 }
 
 type OverallRating struct {
@@ -19,7 +20,7 @@ type OverallRating struct {
 
 func createTopRated(dependencies *TopRatedDependencies) func(string) ([]Restaurant, error) {
 
-	calculateRatings := func(ratings *[]RatingsByRestaurant) (overall OverallRatings) {
+	calculateRatings := func(ratings *[]ratings.RatingsByRestaurant) (overall OverallRatings) {
 		overall = make([]OverallRating, 0)
 		for _, r := range *ratings {
 			overall = append(overall, OverallRating{
