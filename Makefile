@@ -1,4 +1,4 @@
-.PHONY: run build start-dependencies
+.PHONY: run build start-dependencies test
 
 run: build
 	REVIEW_DATABASE_USER=postgres 			\
@@ -13,3 +13,6 @@ start-dependencies:
 
 build: start-dependencies
 	go build
+
+test:
+	go test ./...
